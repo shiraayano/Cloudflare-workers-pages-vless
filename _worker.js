@@ -4,7 +4,7 @@ import { connect } from 'cloudflare:sockets';
 
 // How to generate your own UUID:
 // [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
-let userID = '77a571fb-4fd2-4b37-8596-1b7d9728bb5c';
+let userID = 'fefbfed2-c51f-4c24-b2a0-bebb0745ebc4';
 
 const proxyIPs = ["[2001:67c:2b0:db32:0:1:681a:404]"]; // ['cdn-all.xn--b6gac.eu.org', 'cdn.xn--b6gac.eu.org', 'cdn-b100.xn--b6gac.eu.org', 'edgetunnel.anycast.eu.org', 'cdn.anycast.eu.org'];
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
@@ -99,12 +99,87 @@ export default {
 						});
 					}
 					default:
-						// return new Response('Not found', { status: 404 });
-						// For any other path, reverse proxy to 'www.fmprc.gov.cn' and return the original response
-						url.hostname = 'www.bing.com';
-						url.protocol = 'https:';
-						request = new Request(url, request);
-						return await fetch(request);
+    // For any other path, create a simple HTML page with a download link
+    const originalUrl = new URL(request.url);
+    const downloadUrl = `${originalUrl.protocol}//${originalUrl.hostname}${originalUrl.pathname}`;
+    const htmlContent = `
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>软件名称下载页面</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+			}
+			header {
+				text-align: center;
+				padding: 10px;
+				background-color: #f0f0f0;
+			}
+			h1 {
+				color: #333;
+			}
+			section {
+				margin: 20px 0;
+			}
+			.download-button {
+				display: inline-block;
+				padding: 10px 20px;
+				font-size: 16px;
+				text-align: center;
+				text-decoration: none;
+				background-color: #4caf50;
+				color: #fff;
+				border-radius: 5px;
+			}
+			.download-button:hover {
+				background-color: #45a049;
+			}
+		</style>
+	</head>
+	<body>
+	
+		<header>
+			<h1>软件名称</h1>
+			<p>版本 1.0.0</p>
+		</header>
+	
+		<section>
+			<h2>软件简介</h2>
+			<p>这里是关于软件的简要描述。可以包括软件的功能、特点等信息。</p>
+		</section>
+	
+		<section>
+			<h2>下载链接</h2>
+			<p>点击下面的按钮下载软件：</p>
+			<a href="软件下载链接.zip" class="download-button" download>下载软件</a>
+		</section>
+	
+		<section>
+			<h2>安装说明</h2>
+			<p>在下载完成后，按照以下步骤安装软件：</p>
+			<ol>
+				<li>解压下载的文件</li>
+				<li>运行安装程序</li>
+				<li>按照安装向导完成安装过程</li>
+			</ol>
+		</section>
+	
+		<footer>
+			<p>&copy; 2023 软件名称. All rights reserved.</p>
+		</footer>
+	
+	</body>
+	</html>
+	
+    `;
+    
+    // Return the HTML page as the response
+    return new Response(htmlContent, { headers: { 'Content-Type': 'text/html' } });
+
 				}
 			} else {
 				return await vlessOverWSHandler(request);
